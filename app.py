@@ -441,6 +441,7 @@ def main() -> None:
                     st.session_state.document_processed = True
                     st.session_state.last_model_name = model_name
                     st.session_state.last_llm_provider = llm_provider
+                    st.rerun()
 
                     # Note: File is kept in data/documents/ directory for reference
 
