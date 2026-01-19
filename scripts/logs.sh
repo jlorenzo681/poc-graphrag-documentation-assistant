@@ -5,7 +5,7 @@ set -e
 
 # Parse arguments
 # Parse arguments
-CONTAINER="rag-chatbot"
+CONTAINER="poc-graphrag-documentation-assistant"
 
 
 echo "Viewing $CONTAINER logs (Ctrl+C to exit)..."

@@ -11,15 +11,15 @@ COMPOSE_FILE="docker-compose.yml"
 # Check if docker-compose is available and use correct command
 if command -v docker-compose &> /dev/null; then
     echo "Using docker-compose..."
-    docker-compose -f $COMPOSE_FILE -p rag-fresh down
+    docker-compose -f $COMPOSE_FILE -p poc-graphrag-documentation-assistant down
 elif docker compose version &> /dev/null; then
     echo "Using docker compose plugin..."
-    docker compose -f $COMPOSE_FILE -p rag-fresh down
+    docker compose -f $COMPOSE_FILE -p poc-graphrag-documentation-assistant down
 else
     # Manual stop - stop both containers
     echo "Stopping containers manually..."
-    docker stop rag-chatbot 2>/dev/null || true
-    docker rm rag-chatbot 2>/dev/null || true
+    docker stop poc-graphrag-documentation-assistant 2>/dev/null || true
+    docker rm poc-graphrag-documentation-assistant 2>/dev/null || true
 fi
 
 echo "✓ All services stopped"

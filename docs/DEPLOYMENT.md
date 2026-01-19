@@ -44,7 +44,7 @@ The fastest way to deploy:
 ```bash
 # 1. Clone the repository
 git clone <your-repo-url>
-cd poc-rag-chatbot-wiki
+cd poc-poc-graphrag-documentation-assistant-wiki
 
 # 2. Set up environment variables
 cp .env.example .env
@@ -157,10 +157,10 @@ The application uses three persistent volumes:
 
 ```bash
 # Real-time logs
-docker logs -f rag-chatbot
+docker logs -f poc-graphrag-documentation-assistant
 
 # Last 100 lines
-docker logs --tail 100 rag-chatbot
+docker logs --tail 100 poc-graphrag-documentation-assistant
 ```
 
 ### Health Check
@@ -169,7 +169,7 @@ The container includes a health check:
 
 ```bash
 # Check health status
-docker inspect rag-chatbot | grep -A 10 Health
+docker inspect poc-graphrag-documentation-assistant | grep -A 10 Health
 
 # Manual health check
 curl http://localhost:8501/_stcore/health
@@ -190,7 +190,7 @@ tail -f logs/*.log
 
 **Check logs:**
 ```bash
-docker logs rag-chatbot
+docker logs poc-graphrag-documentation-assistant
 ```
 
 **Common issues:**
@@ -208,7 +208,8 @@ docker logs rag-chatbot
 **Clear build cache:**
 ```bash
 docker system prune -a
-docker build --no-cache -t rag-chatbot:latest -f Containerfile .
+docker build -t poc-graphrag-documentation-assistant -f Containerfile .
+docker run -p 8501:8501 poc-graphrag-documentation-assistant
 ```
 
 ## Support
@@ -217,5 +218,5 @@ For issues or questions:
 
 1. Check [README.md](../README.md) for general documentation
 2. Review [SETUP.md](SETUP.md) for installation help
-3. Check logs: `docker logs rag-chatbot`
+3. Check logs: `docker logs poc-graphrag-documentation-assistant`
 4. Open an issue on GitHub

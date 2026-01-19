@@ -70,11 +70,11 @@ echo "Generating requirements.txt..."
 uv export --format requirements-txt > requirements.txt
 
 # Build the image only if it doesn't exist
-if ! docker image inspect rag-chatbot:latest >/dev/null 2>&1; then
+if ! docker image inspect poc-graphrag-documentation-assistant:latest >/dev/null 2>&1; then
     echo -e "\n${YELLOW}Image not found. Building container image...${NC}"
-    docker build -t rag-chatbot:latest -f Containerfile .
+    docker build -t poc-graphrag-documentation-assistant:latest -f Containerfile .
 else
-    echo -e "\n${GREEN}✓ Image rag-chatbot:latest already exists${NC}"
+    echo -e "\n${GREEN}✓ Image poc-graphrag-documentation-assistant:latest already exists${NC}"
 fi
 
 # Stop existing containers via compose
@@ -99,7 +99,7 @@ sleep 5
 
 # Check if containers are running
 # Check if containers are running
-if docker ps | grep -q rag-chatbot; then
+if docker ps | grep -q poc-graphrag-documentation-assistant; then
     echo -e "\n${GREEN}======================================"
     echo "✓ Deployment successful!"
     echo "======================================${NC}"
@@ -108,7 +108,7 @@ if docker ps | grep -q rag-chatbot; then
     echo "  - RAG Chatbot: http://localhost:8501"
     echo ""
     echo "Useful commands:"
-    echo "  View logs:           docker logs -f rag-chatbot"
+    echo "  View logs:           docker logs -f poc-graphrag-documentation-assistant"
     echo "  Stop all:            $COMPOSE_CMD down"
     echo "  Restart all:         $COMPOSE_CMD restart"
     echo "  Container status:    $COMPOSE_CMD ps"
@@ -119,6 +119,6 @@ else
     echo "✗ Deployment failed!"
     echo "======================================${NC}"
     echo "Check logs with:"
-    echo "  docker logs rag-chatbot"
+    echo "  docker logs poc-graphrag-documentation-assistant"
     exit 1
 fi

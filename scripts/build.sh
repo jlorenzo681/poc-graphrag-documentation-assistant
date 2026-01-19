@@ -5,9 +5,9 @@ set -e
 
 echo "Building RAG Chatbot container image..."
 
-docker build --no-cache -t rag-chatbot:latest -f Containerfile .
+docker build --no-cache -t poc-graphrag-documentation-assistant:latest -f Containerfile .
 
 echo "✓ Build complete!"
 echo ""
 echo "Image details:"
-docker images | grep rag-chatbot || true
+docker images | grep poc-graphrag-documentation-assistant || true

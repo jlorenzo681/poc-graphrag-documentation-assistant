@@ -54,17 +54,17 @@ fi
 # Stop and remove containers using compose if available
 echo -e "\n${YELLOW}Stopping and removing containers...${NC}"
 if command -v docker-compose &> /dev/null; then
-    docker-compose -p rag-fresh down 2>/dev/null || true
+    docker-compose -p poc-graphrag-documentation-assistant down 2>/dev/null || true
     echo -e "${GREEN}✓ Containers stopped via docker-compose${NC}"
 elif docker compose version &> /dev/null; then
-    docker compose -p rag-fresh down 2>/dev/null || true
+    docker compose -p poc-graphrag-documentation-assistant down 2>/dev/null || true
     echo -e "${GREEN}✓ Containers stopped via docker compose${NC}"
 else
     # Manual removal
-    if docker ps -a | grep -q rag-chatbot; then
-        docker stop rag-chatbot 2>/dev/null || true
-        docker rm rag-chatbot 2>/dev/null || true
-        echo -e "${GREEN}✓ rag-chatbot container removed${NC}"
+    if docker ps -a | grep -q poc-graphrag-documentation-assistant; then
+        docker stop poc-graphrag-documentation-assistant 2>/dev/null || true
+        docker rm poc-graphrag-documentation-assistant 2>/dev/null || true
+        echo -e "${GREEN}✓ poc-graphrag-documentation-assistant container removed${NC}"
     fi
 
     if docker ps -a --format "{{.Names}}" | grep -q "^buildx_buildkit_default$"; then
@@ -78,11 +78,11 @@ fi
 if [ "$REMOVE_IMAGES" = true ]; then
     echo -e "\n${YELLOW}Removing images...${NC}"
 
-    if docker image inspect rag-chatbot:latest >/dev/null 2>&1; then
-        docker rmi rag-chatbot:latest 2>/dev/null || true
-        echo -e "${GREEN}✓ rag-chatbot image removed${NC}"
+    if docker image inspect poc-graphrag-documentation-assistant:latest >/dev/null 2>&1; then
+        docker rmi poc-graphrag-documentation-assistant:latest 2>/dev/null || true
+        echo -e "${GREEN}✓ poc-graphrag-documentation-assistant image removed${NC}"
     else
-        echo -e "${YELLOW}⚠ rag-chatbot image not found${NC}"
+        echo -e "${YELLOW}⚠ poc-graphrag-documentation-assistant image not found${NC}"
     fi
 else
     echo -e "\n${YELLOW}⚠ Images kept (use --images flag to remove)${NC}"
@@ -92,8 +92,8 @@ fi
 if [ "$REMOVE_VOLUMES" = true ]; then
     echo -e "\n${YELLOW}Removing volumes...${NC}"
 
-    if docker volume inspect poc-rag-chatbot-wiki_hf-cache >/dev/null 2>&1; then
-        docker volume rm poc-rag-chatbot-wiki_hf-cache 2>/dev/null || true
+    if docker volume inspect poc-graphrag-documentation-assistant_hf-cache >/dev/null 2>&1; then
+        docker volume rm poc-graphrag-documentation-assistant_hf-cache 2>/dev/null || true
         echo -e "${GREEN}✓ HuggingFace cache volume removed${NC}"
     else
         echo -e "${YELLOW}⚠ HuggingFace cache volume not found${NC}"
@@ -104,7 +104,7 @@ fi
 
 # Remove networks if they exist and have no containers
 echo -e "\n${YELLOW}Cleaning up networks...${NC}"
-for network in rag-network poc-rag-chatbot-wiki_rag-network; do
+for network in rag-network poc-graphrag-documentation-assistant_rag-network; do
     if docker network inspect $network >/dev/null 2>&1; then
         # Check if network has any containers
         # Docker syntax for network inspect is lengthy, easier to just try removing
@@ -121,10 +121,10 @@ echo ""
 echo "Remaining resources:"
 echo ""
 echo "Containers:"
-docker ps -a | grep -E 'CONTAINER|rag-chatbot' || echo "  None"
+docker ps -a | grep -E 'CONTAINER|poc-graphrag-documentation-assistant' || echo "  None"
 echo ""
 echo "Images:"
-docker images | grep -E 'REPOSITORY|rag-chatbot' || echo "  None"
+docker images | grep -E 'REPOSITORY|poc-graphrag-documentation-assistant' || echo "  None"
 echo ""
 echo "Volumes:"
 docker volume ls | grep -E 'DRIVER' || echo "  None"

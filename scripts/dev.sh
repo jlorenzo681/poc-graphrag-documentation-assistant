@@ -70,14 +70,14 @@ fi
 
 # Start all services using compose with project name to avoid state issues
 echo -e "\n${GREEN}Starting development stack (Redis, Backend, Worker, Frontend)...${NC}"
-DOCKER_BUILDKIT=1 $COMPOSE_CMD -p rag-fresh up --build -d
+DOCKER_BUILDKIT=1 $COMPOSE_CMD -p poc-graphrag-documentation-assistant up --build -d
 
 # Wait for services to be ready
 echo -e "${YELLOW}Waiting for services to start...${NC}"
 sleep 10
 
 # Check if containers are running
-if docker ps | grep -q rag-chatbot; then
+if docker ps | grep -q poc-graphrag-documentation-assistant; then
     echo -e "\n${GREEN}======================================"
     echo "✓ Development mode started!"
     echo "======================================${NC}"
@@ -96,14 +96,14 @@ if docker ps | grep -q rag-chatbot; then
     echo "Changes to these files will be reflected immediately!"
     echo ""
     echo "Useful commands:"
-    echo "  View logs:           docker logs -f rag-chatbot"
-    echo "  Stop dev container:  docker stop rag-chatbot"
+    echo "  View logs:           docker logs -f poc-graphrag-documentation-assistant"
+    echo "  Stop dev container:  docker stop poc-graphrag-documentation-assistant"
     echo "  Stop all:            $COMPOSE_CMD down"
     echo ""
 else
     echo -e "\n${RED}======================================"
     echo "✗ Failed to start development mode!"
     echo "======================================${NC}"
-    echo "Check logs with: docker logs rag-chatbot"
+    echo "Check logs with: docker logs poc-graphrag-documentation-assistant"
     exit 1
 fi

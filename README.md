@@ -18,7 +18,7 @@ A production-ready, fully local Retrieval-Augmented Generation (RAG) system feat
 
 The system consists of the following containerized services:
 
-1.  **rag-chatbot** (Frontend): Streamlit UI for uploading documents, chatting, and viewing the knowledge graph.
+1.  **poc-graphrag-documentation-assistant** (Frontend): Streamlit UI for uploading documents, chatting, and viewing the knowledge graph.
 2.  **backend** (API): FastAPI service handling file uploads, retrieval logic, and task orchestration.
 3.  **celery_worker** (Processing): Background worker for parsing PDF/TXT/MD files and generating embeddings.
 4.  **redis** (Message Broker & Cache): Handles Celery task queues and caches vector stores.
@@ -36,7 +36,7 @@ The system consists of the following containerized services:
 1.  **Clone the Repository**
     ```bash
     git clone <your-repo-url>
-    cd poc-rag-chatbot-wiki
+    cd poc-graphrag-documentation-assistant
     ```
 
 2.  **Configure Environment**
@@ -107,7 +107,7 @@ Key settings in `.env`:
 ## 📁 Project Structure
 
 ```
-poc-rag-chatbot-wiki/
+poc-poc-graphrag-documentation-assistant-wiki/
 ├── src/
 │   ├── backend/              # FastAPI Application & Celery Tasks
 │   └── chatbot/              # Core Logic (RAG, Events, Graph)

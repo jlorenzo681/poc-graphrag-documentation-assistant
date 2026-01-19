@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  rag-chatbot:
-    image: rag-chatbot:latest
+  poc-graphrag-documentation-assistant:
+    image: poc-graphrag-documentation-assistant:latest
     build:
       context: .
       dockerfile: Containerfile
-    container_name: rag-chatbot
+    container_name: poc-graphrag-documentation-assistant
     user: "${UID:-1000}:${GID:-1000}"
     ports:
       - "8501:8501"

@@ -9,7 +9,7 @@ Get the RAG Chatbot running in minutes with local LLMs!
 ```bash
 # 1. Clone and navigate
 git clone <your-repo-url>
-cd poc-rag-chatbot-wiki
+cd poc-graphrag-documentation-assistant
 
 # 2. Setup Env
 cp .env.example .env
@@ -85,7 +85,7 @@ kill -9 <PID>
 ### Container Won't Start
 ```bash
 # Check logs
-docker logs rag-chatbot
+docker logs poc-graphrag-documentation-assistant
 
 # Rebuild image
 make clean

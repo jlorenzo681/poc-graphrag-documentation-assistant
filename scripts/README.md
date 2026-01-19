@@ -42,7 +42,7 @@ Stop all services.
 View container logs.
 
 ```bash
-# View rag-chatbot logs (default)
+# View poc-graphrag-documentation-assistant logs (default)
 ./scripts/logs.sh
 ```
 
@@ -100,7 +100,7 @@ Clean up containers, images, volumes, and networks.
 ## Architecture
 
 Scripts use `docker-compose.yml` to manage the services.
-- **rag-chatbot**: Streamlit web application
+- **poc-graphrag-documentation-assistant**: Streamlit web application
 - **backend**: FastAPI backend service
 - **celery_worker**: Asynchronous task worker
 - **redis**: Message broker and cache

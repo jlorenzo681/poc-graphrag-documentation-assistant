@@ -13,8 +13,8 @@ This guide will help you set up and run the RAG Chatbot application locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd poc-rag-chatbot-wiki
+git clone <repository_url>/poc-graphrag-documentation-assistant.git
+cd poc-graphrag-documentation-assistant
 ```
 
 ### 2. Create a Virtual Environment (Recommended for Local Dev)
@@ -68,7 +68,7 @@ The app will open in your browser at `http://localhost:8501`
 ## Project Structure Overview
 
 ```
-poc-rag-chatbot-wiki/
+poc-poc-graphrag-documentation-assistant-wiki/
 ├── src/chatbot/          # Main application package
 │   ├── core/            # Core modules (processing, vector store, RAG)
 │   └── utils/           # Utility functions
@@ -132,7 +132,7 @@ If you cannot connect to the LLM:
 
 If you get import errors, ensure you're running from the project root:
 ```bash
-cd /path/to/poc-rag-chatbot-wiki
+cd /path/to/poc-poc-graphrag-documentation-assistant-wiki
 python app.py  # or streamlit run app.py
 ```
 

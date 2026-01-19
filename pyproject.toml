@@ -1,5 +1,5 @@
 [project]
-name = "poc-rag-chatbot-wiki"
+name = "poc-graphrag-documentation-assistant"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"

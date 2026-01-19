@@ -1155,19 +1155,6 @@ wheels = [
 ]
 
 [[package]]
-name = "langchain-ollama"
-version = "0.1.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "langchain-core" },
-    { name = "ollama" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/33/84/33fb226b9f6b2c027cedac4306a9b4d9a33064d985e2cb223c493f30fbd0/langchain_ollama-0.1.0.tar.gz", hash = "sha256:002b9720aed04aca17cbe1448b534126d85ae561a9acb382d000a208c9bf7b89", size = 10236, upload-time = "2024-07-22T18:00:04.541Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e7/92/a283c7f0f9149bef5f440ae563451195e4864ddfe9ba8132fcc10624e9a5/langchain_ollama-0.1.0-py3-none-any.whl", hash = "sha256:d549b3ccf565a9ee9f6cfe8cfb8a94976b7fd0f427cd842ba134db7e2bf5b8cf", size = 12655, upload-time = "2024-07-22T18:00:03.101Z" },
-]
-
-[[package]]
 name = "langchain-openai"
 version = "0.1.23"
 source = { registry = "https://pypi.org/simple" }
@@ -1876,19 +1863,6 @@ wheels = [
 ]
 
 [[package]]
-name = "ollama"
-version = "0.6.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "httpx" },
-    { name = "pydantic" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/9d/5a/652dac4b7affc2b37b95386f8ae78f22808af09d720689e3d7a86b6ed98e/ollama-0.6.1.tar.gz", hash = "sha256:478c67546836430034b415ed64fa890fd3d1ff91781a9d548b3325274e69d7c6", size = 51620, upload-time = "2025-11-13T23:02:17.416Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/47/4f/4a617ee93d8208d2bcf26b2d8b9402ceaed03e3853c754940e2290fed063/ollama-0.6.1-py3-none-any.whl", hash = "sha256:fc4c984b345735c5486faeee67d8a265214a31cbb828167782dc642ce0a2bf8c", size = 14354, upload-time = "2025-11-13T23:02:16.292Z" },
-]
-
-[[package]]
 name = "openai"
 version = "1.109.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2127,7 +2101,7 @@ wheels = [
 ]
 
 [[package]]
-name = "poc-rag-chatbot-wiki"
+name = "poc-graphrag-documentation-assistant"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
@@ -2141,7 +2115,6 @@ dependencies = [
     { name = "langchain-core" },
     { name = "langchain-experimental" },
     { name = "langchain-huggingface" },
-    { name = "langchain-ollama" },
     { name = "langchain-openai" },
     { name = "langchain-text-splitters" },
     { name = "langgraph" },
@@ -2178,7 +2151,6 @@ requires-dist = [
     { name = "langchain-core", specifier = "==0.2.38" },
     { name = "langchain-experimental", specifier = ">=0.0.60" },
     { name = "langchain-huggingface", specifier = "==0.0.3" },
-    { name = "langchain-ollama", specifier = "==0.1.0" },
     { name = "langchain-openai", specifier = "==0.1.23" },
     { name = "langchain-text-splitters", specifier = "==0.2.4" },
     { name = "langgraph", specifier = ">=0.0.10" },

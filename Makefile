@@ -1,7 +1,7 @@
 # Makefile for RAG Chatbot Project
 
 # Project name for Docker Compose
-PROJECT_NAME := rag-fresh
+PROJECT_NAME := poc-graphrag-documentation-assistant
 
 .PHONY: help build run stop logs clean clean-all clean-images clean-volumes deploy test install dev pull-models
 
@@ -65,7 +65,7 @@ logs:
 # Open shell in container
 shell:
 	@echo "Opening shell in container..."
-	docker exec -it rag-chatbot /bin/bash
+	docker exec -it poc-graphrag-documentation-assistant /bin/bash
 
 # Clean up - containers only
 clean:
