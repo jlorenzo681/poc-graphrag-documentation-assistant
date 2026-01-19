@@ -100,9 +100,9 @@ Clean up containers, images, volumes, and networks.
 ## Architecture
 
 Scripts use `docker-compose.yml` to manage the services.
-- **poc-graphrag-documentation-assistant**: Streamlit web application
+- **webapp**: Streamlit web application
 - **backend**: FastAPI backend service
-- **celery_worker**: Asynchronous task worker
+- **worker**: Asynchronous task worker
 - **redis**: Message broker and cache
 - **neo4j**: Graph database
 

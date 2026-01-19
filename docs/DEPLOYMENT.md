@@ -157,10 +157,10 @@ The application uses three persistent volumes:
 
 ```bash
 # Real-time logs
-docker logs -f poc-graphrag-documentation-assistant
+docker logs -f webapp
 
 # Last 100 lines
-docker logs --tail 100 poc-graphrag-documentation-assistant
+docker logs --tail 100 webapp
 ```
 
 ### Health Check
@@ -169,7 +169,7 @@ The container includes a health check:
 
 ```bash
 # Check health status
-docker inspect poc-graphrag-documentation-assistant | grep -A 10 Health
+docker inspect webapp | grep -A 10 Health
 
 # Manual health check
 curl http://localhost:8501/_stcore/health
@@ -190,7 +190,7 @@ tail -f logs/*.log
 
 **Check logs:**
 ```bash
-docker logs poc-graphrag-documentation-assistant
+docker logs webapp
 ```
 
 **Common issues:**
@@ -208,8 +208,8 @@ docker logs poc-graphrag-documentation-assistant
 **Clear build cache:**
 ```bash
 docker system prune -a
-docker build -t poc-graphrag-documentation-assistant -f Containerfile .
-docker run -p 8501:8501 poc-graphrag-documentation-assistant
+docker build -t poc-graphrag-documentation-assistant-webapp -f Containerfile .
+docker run -p 8501:8501 poc-graphrag-documentation-assistant-webapp
 ```
 
 ## Support
@@ -218,5 +218,5 @@ For issues or questions:
 
 1. Check [README.md](../README.md) for general documentation
 2. Review [SETUP.md](SETUP.md) for installation help
-3. Check logs: `docker logs poc-graphrag-documentation-assistant`
+3. Check logs: `docker logs webapp`
 4. Open an issue on GitHub

@@ -85,7 +85,7 @@ kill -9 <PID>
 ### Container Won't Start
 ```bash
 # Check logs
-docker logs poc-graphrag-documentation-assistant
+docker logs webapp
 
 # Rebuild image
 make clean

@@ -18,9 +18,9 @@ A production-ready, fully local Retrieval-Augmented Generation (RAG) system feat
 
 The system consists of the following containerized services:
 
-1.  **poc-graphrag-documentation-assistant** (Frontend): Streamlit UI for uploading documents, chatting, and viewing the knowledge graph.
+1.  **webapp** (Frontend): Streamlit UI for uploading documents, chatting, and viewing the knowledge graph.
 2.  **backend** (API): FastAPI service handling file uploads, retrieval logic, and task orchestration.
-3.  **celery_worker** (Processing): Background worker for parsing PDF/TXT/MD files and generating embeddings.
+3.  **worker** (Processing): Background worker for parsing PDF/TXT/MD files and generating embeddings.
 4.  **redis** (Message Broker & Cache): Handles Celery task queues and caches vector stores.
 5.  **neo4j** (Graph Database): Stores extracted entities and relationships for knowledge graph visualization.
 
@@ -129,7 +129,7 @@ Ensure your local LLM server is allowing external connections or listen on `0.0.
 Ensure Neo4j is running and the `ENABLE_GRAPHRAG` setting is True. You may need to "Start Over" and re-process the document to populate the graph.
 
 **Worker not picking up tasks?**
-Check Redis connectivity and ensure the `celery_worker` container is healthy.
+Check Redis connectivity and ensure the `worker` container is healthy.
 
 ## 🤝 Contributing
 
