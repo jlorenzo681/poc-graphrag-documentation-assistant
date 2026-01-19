@@ -28,7 +28,7 @@ The system consists of the following containerized services:
 
 - **Docker Desktop** (must be running)
 - **LM Studio** (installed on your host machine)
-- **Python 3.10+** (for local development)
+- **Python 3.10+** (for dynamic updates or local dev)
 - **Make** (optional, for easy commands)
 
 ## ⚡ Quick Start (Docker)
@@ -47,6 +47,7 @@ The system consists of the following containerized services:
 
 3.  **Start LLM Server**
     - **LM Studio**: Start the Local Inference Server (default port 1234).
+    - Ensure Cross-Origin-Resource-Sharing (CORS) is enabled in LM Studio server settings.
 
 4.  **Deploy Application**
     ```bash
@@ -98,7 +99,6 @@ Key settings in `.env`:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-
 | `LLM_BASE_URL` | URL for LM Studio | `http://host.docker.internal:1234/v1` |
 | `REDIS_URL` | Redis connection string | `redis://redis:6379/0` (Docker) |
 | `NEO4J_URI` | Neo4j Bolt URI | `bolt://neo4j:7687` |

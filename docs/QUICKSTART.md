@@ -1,21 +1,25 @@
 # Quick Start Guide
 
-Get the RAG Chatbot running in minutes!
+Get the RAG Chatbot running in minutes with local LLMs!
 
 ## 🚀 Fastest Way to Deploy
 
-### Using Podman (Recommended for Production)
+### Using Docker (Recommended)
 
 ```bash
 # 1. Clone and navigate
 git clone <your-repo-url>
 cd poc-rag-chatbot-wiki
 
-# 2. Set up API key
+# 2. Setup Env
 cp .env.example .env
-echo "GROQ_API_KEY=your-key-here" > .env
 
-# 3. Deploy!
+# 3. Start LM Studio Server
+# - Open LM Studio -> Local Server
+# - Start Server (Port 1234)
+# - Enable CORS
+
+# 4. Deploy!
 make deploy
 
 # Visit: http://localhost:8501
@@ -27,10 +31,7 @@ make deploy
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Set API key
-export GROQ_API_KEY='your-key-here'
-
-# 3. Run!
+# 2. Run!
 streamlit run app.py
 
 # Visit: http://localhost:8501
@@ -38,7 +39,7 @@ streamlit run app.py
 
 ## 📋 Common Commands
 
-### Podman Deployment
+### Docker Deployment
 
 ```bash
 make deploy          # Deploy application
@@ -53,48 +54,38 @@ make clean           # Remove containers
 
 ```bash
 streamlit run app.py              # Start web interface
-python example_usage.py           # Run CLI examples
 make test                         # Run tests
 ```
-
-## 🔑 Getting Your API Key
-
-1. Visit [Groq Console](https://console.groq.com/keys)
-2. Sign up or log in
-3. Create a new API key
-4. Copy the key to your `.env` file
 
 ## 📝 First Steps After Deployment
 
 1. **Open the app**: Navigate to `http://localhost:8501`
-2. **Enter API key**: Paste your Groq API key in the sidebar
-3. **Upload a document**: Choose a PDF, TXT, or MD file
-4. **Process document**: Click the "Process Document" button
-5. **Ask questions**: Start chatting!
+2. **Configure Provider**: Ensure "LM Studio" is selected in sidebar.
+3. **Select Model**: Choose a loaded model from the dropdown.
+4. **Upload a document**: Choose a PDF, TXT, or MD file.
+5. **Process document**: Click the "Process Document" button.
+6. **Ask questions**: Start chatting!
 
 ## 🛠️ Troubleshooting
+
+### LM Studio Connection Failed
+- Ensure server is running on port `1234`.
+- If using Docker, ensure `LLM_BASE_URL` is `http://host.docker.internal:1234/v1`.
+- **Enable CORS** in LM Studio server settings.
 
 ### Port Already in Use
 ```bash
 # Find what's using port 8501
-sudo ss -tulpn | grep 8501
+sudo lsof -i :8501
 
-# Kill the process or change port
-podman run -p 8080:8501 ...
-```
-
-### API Key Not Working
-```bash
-# Verify your .env file
-cat .env | grep GROQ_API_KEY
-
-# Make sure no extra spaces or quotes
+# Kill the process
+kill -9 <PID>
 ```
 
 ### Container Won't Start
 ```bash
 # Check logs
-podman logs rag-chatbot
+docker logs rag-chatbot
 
 # Rebuild image
 make clean
@@ -104,23 +95,18 @@ make deploy
 
 ## 📚 Learn More
 
-- **Full Documentation**: See [README.md](README.md)
+- **Full Documentation**: See [README.md](../README.md)
 - **Deployment Guide**: See [DEPLOYMENT.md](DEPLOYMENT.md)
 - **Setup Instructions**: See [SETUP.md](SETUP.md)
-- **Architecture Details**: See [STRUCTURE.md](STRUCTURE.md)
 
 ## 🎯 What's Next?
 
-- Try different LLM models (llama-3.1-8b-instant, compound)
+- Try different models in LM Studio (Llama 3, Mistral, etc.)
 - Experiment with temperature settings
 - Upload larger documents
 - Save and reuse vector stores
-- Deploy with systemd for auto-start
 
 ## 💡 Tips
 
-- Use HuggingFace embeddings for free, local processing
-- Lower temperature (0.1-0.3) for factual answers
-- Higher temperature (0.5-0.7) for creative responses
-- Retrieval K=4 is usually optimal
-- Check out [example_usage.py](example_usage.py) for programmatic usage
+- Use quantized models (q4_k_m) in LM Studio for speed.
+- Lower temperature (0.1-0.3) for factual answers.
