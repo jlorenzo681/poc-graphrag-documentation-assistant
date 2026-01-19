@@ -54,18 +54,20 @@ fi
 # Stop and remove containers using compose if available
 echo -e "\n${YELLOW}Stopping and removing containers...${NC}"
 if command -v docker-compose &> /dev/null; then
-    docker-compose -p poc-graphrag-documentation-assistant down 2>/dev/null || true
+    docker-compose down 2>/dev/null || true
     echo -e "${GREEN}✓ Containers stopped via docker-compose${NC}"
 elif docker compose version &> /dev/null; then
-    docker compose -p poc-graphrag-documentation-assistant down 2>/dev/null || true
+    docker compose down 2>/dev/null || true
     echo -e "${GREEN}✓ Containers stopped via docker compose${NC}"
 else
     # Manual removal
-    if docker ps -a | grep -q poc-graphrag-documentation-assistant; then
-        docker stop poc-graphrag-documentation-assistant 2>/dev/null || true
-        docker rm poc-graphrag-documentation-assistant 2>/dev/null || true
-        echo -e "${GREEN}✓ poc-graphrag-documentation-assistant container removed${NC}"
-    fi
+    for container in assistant backend worker redis neo4j; do
+        if docker ps -a | grep -q $container; then
+            docker stop $container 2>/dev/null || true
+            docker rm $container 2>/dev/null || true
+            echo -e "${GREEN}✓ $container container removed${NC}"
+        fi
+    done
 
     if docker ps -a --format "{{.Names}}" | grep -q "^buildx_buildkit_default$"; then
         docker stop buildx_buildkit_default >/dev/null 2>&1 || true
@@ -78,11 +80,19 @@ fi
 if [ "$REMOVE_IMAGES" = true ]; then
     echo -e "\n${YELLOW}Removing images...${NC}"
 
-    if docker image inspect poc-graphrag-documentation-assistant:latest >/dev/null 2>&1; then
-        docker rmi poc-graphrag-documentation-assistant:latest 2>/dev/null || true
-        echo -e "${GREEN}✓ poc-graphrag-documentation-assistant image removed${NC}"
-    else
-        echo -e "${YELLOW}⚠ poc-graphrag-documentation-assistant image not found${NC}"
+    if docker image inspect poc-graphrag-documentation-assistant-webapp:latest >/dev/null 2>&1; then
+        docker rmi poc-graphrag-documentation-assistant-webapp:latest 2>/dev/null || true
+        echo -e "${GREEN}✓ poc-graphrag-documentation-assistant-webapp image removed${NC}"
+    fi
+    
+    if docker image inspect poc-graphrag-documentation-assistant-backend:latest >/dev/null 2>&1; then
+        docker rmi poc-graphrag-documentation-assistant-backend:latest 2>/dev/null || true
+        echo -e "${GREEN}✓ poc-graphrag-documentation-assistant-backend image removed${NC}"
+    fi
+
+    if docker image inspect poc-graphrag-documentation-assistant-worker:latest >/dev/null 2>&1; then
+        docker rmi poc-graphrag-documentation-assistant-worker:latest 2>/dev/null || true
+        echo -e "${GREEN}✓ poc-graphrag-documentation-assistant-worker image removed${NC}"
     fi
 else
     echo -e "\n${YELLOW}⚠ Images kept (use --images flag to remove)${NC}"
@@ -92,19 +102,19 @@ fi
 if [ "$REMOVE_VOLUMES" = true ]; then
     echo -e "\n${YELLOW}Removing volumes...${NC}"
 
-    if docker volume inspect poc-graphrag-documentation-assistant_hf-cache >/dev/null 2>&1; then
-        docker volume rm poc-graphrag-documentation-assistant_hf-cache 2>/dev/null || true
-        echo -e "${GREEN}✓ HuggingFace cache volume removed${NC}"
-    else
-        echo -e "${YELLOW}⚠ HuggingFace cache volume not found${NC}"
-    fi
+    for volume in graphrag-assistant_hf-cache graphrag-assistant_redis-data graphrag-assistant_neo4j-data; do
+        if docker volume inspect $volume >/dev/null 2>&1; then
+            docker volume rm $volume 2>/dev/null || true
+            echo -e "${GREEN}✓ $volume removed${NC}"
+        fi
+    done
 else
     echo -e "\n${YELLOW}⚠ Volumes kept (use --volumes flag to remove)${NC}"
 fi
 
 # Remove networks if they exist and have no containers
 echo -e "\n${YELLOW}Cleaning up networks...${NC}"
-for network in rag-network poc-graphrag-documentation-assistant_rag-network; do
+for network in graphrag-assistant_default rag-network graphrag-network documentation-assistant-network; do
     if docker network inspect $network >/dev/null 2>&1; then
         # Check if network has any containers
         # Docker syntax for network inspect is lengthy, easier to just try removing
@@ -121,11 +131,11 @@ echo ""
 echo "Remaining resources:"
 echo ""
 echo "Containers:"
-docker ps -a | grep -E 'CONTAINER|poc-graphrag-documentation-assistant' || echo "  None"
+docker ps -a | grep -E 'CONTAINER|assistant' || echo "  None"
 echo ""
 echo "Images:"
 docker images | grep -E 'REPOSITORY|poc-graphrag-documentation-assistant' || echo "  None"
 echo ""
 echo "Volumes:"
-docker volume ls | grep -E 'DRIVER' || echo "  None"
+docker volume ls | grep -E 'DRIVER|graphrag-assistant' || echo "  None"
 echo ""

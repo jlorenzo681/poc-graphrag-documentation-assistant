@@ -1,13 +1,21 @@
 #!/bin/bash
-# Build RAG Chatbot container image
+# Build and Start RAG Chatbot services
+# Optimized for speed and completeness
 
 set -e
 
-echo "Building RAG Chatbot container image..."
+echo "Building and starting RAG Chatbot services..."
 
-docker build --no-cache -t poc-graphrag-documentation-assistant:latest -f Containerfile .
+# Build and start services in detached mode
+# First, remove any existing containers to avoid name conflicts
+docker compose down --remove-orphans || true
+docker rm -f assistant backend worker redis neo4j 2>/dev/null || true
 
-echo "✓ Build complete!"
+# --build ensures images are rebuilt if needed (Docker acts smart about layer caching)
+# -d runs in background
+docker compose up --build -d
+
+echo "✓ Services built and started!"
 echo ""
-echo "Image details:"
-docker images | grep poc-graphrag-documentation-assistant || true
+echo "Service status:"
+docker compose ps

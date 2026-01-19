@@ -1,21 +1,22 @@
 # syntax=docker/dockerfile:1.4
-# Containerfile for RAG Chatbot - Optimized for fast builds
+# Containerfile for RAG Chatbot - Optimized for fast builds with uv
 # Compatible with Podman and Docker
 
-FROM docker.io/library/python:3.11-slim AS base
+FROM python:3.11-slim-bookworm AS builder
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 # Set working directory
 WORKDIR /app
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    TRANSFORMERS_CACHE=/app/.cache/huggingface \
-    HF_HOME=/app/.cache/huggingface
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
-# Install system dependencies in a single layer
+# Install system dependencies
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y \
@@ -24,29 +25,43 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# ============================================
-# Dependencies stage - cached separately
-# ============================================
-FROM base AS dependencies
+# Copy dependency files
+COPY pyproject.toml uv.lock ./
 
-# Copy requirements first for better caching
-COPY requirements.txt .
-
-# Install Python dependencies with pip cache mount
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --no-cache-dir -r requirements.txt
-
-# Pre-download HuggingFace model step removed to use local cache
+# Install dependencies using uv
+# mount the uv cache to speed up subsequent builds
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-project --no-dev
 
 # ============================================
 # Final stage - application code
 # ============================================
-FROM dependencies AS final
+FROM python:3.11-slim-bookworm AS final
+
+# Set working directory
+WORKDIR /app
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/app/.venv/bin:$PATH" \
+    TRANSFORMERS_CACHE=/app/.cache/huggingface \
+    HF_HOME=/app/.cache/huggingface
+
+# Install runtime system dependencies (curl for healthcheck)
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy virtual environment from builder
+COPY --from=builder /app/.venv /app/.venv
 
 # Create necessary directories
 RUN mkdir -p data/documents data/vector_stores logs /app/.cache/huggingface
 
-# Copy only essential application code (not everything)
+# Copy only essential application code
 COPY app.py .
 COPY config/ ./config/
 COPY src/ ./src/
@@ -67,4 +82,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
 # Run the application
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["/app/.venv/bin/python", "-m", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]

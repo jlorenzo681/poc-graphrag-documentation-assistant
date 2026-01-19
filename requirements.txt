@@ -588,7 +588,6 @@ httpx==0.28.1 \
     --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
     # via
     #   langsmith
-    #   ollama
     #   openai
 huggingface-hub==0.36.0 \
     --hash=sha256:47b3f0e2539c39bf5cde015d63b72ec49baff67b6931c3d97f3f84532e2b8d25 \
@@ -757,7 +756,6 @@ langchain-core==0.2.38 \
     #   langchain-community
     #   langchain-experimental
     #   langchain-huggingface
-    #   langchain-ollama
     #   langchain-openai
     #   langchain-text-splitters
     #   langgraph
@@ -771,7 +769,6 @@ langchain-huggingface==0.0.3 \
     --hash=sha256:0637acf484c47323cf3dcc46745a93467f6955989af9b7c01e2382fe1b630aaf \
     --hash=sha256:d6827adf3c7c8fcc0bca8c43c7e900c3bf68af9a1532a83d4b8ace137e02887e
     # via poc-graphrag-documentation-assistant
-
 langchain-openai==0.1.23 \
     --hash=sha256:8e3d215803e157f26480c6108eb4333629832b1a0e746723060c24f93b8b78f4 \
     --hash=sha256:ed7f16671ea0af177ac5f82d5645a746c5097c56f97b31798e5c07b5c84f0eed
@@ -1289,7 +1286,6 @@ nvidia-nvjitlink-cu12==12.9.86 ; platform_machine == 'x86_64' and sys_platform =
 nvidia-nvtx-cu12==12.1.105 ; platform_machine == 'x86_64' and sys_platform == 'linux' \
     --hash=sha256:dc21cf308ca5691e7c04d962e213f8a4aa9bbfa23d95412f452254c2caeb09e5
     # via torch
-
 openai==1.109.1 \
     --hash=sha256:6bcaf57086cf59159b8e27447e4e7dd019db5d29a438072fbd49c290c7e65315 \
     --hash=sha256:d173ed8dbca665892a6db099b4a2dfac624f94d20a93f46eb0b56aae940ed869
@@ -1679,7 +1675,6 @@ pydantic==2.12.5 \
     #   langchain
     #   langchain-core
     #   langsmith
-    #   ollama
     #   openai
 pydantic-core==2.41.5 \
     --hash=sha256:0177272f88ab8312479336e1d777f6b124537d47f2123f89cb37e0accea97f90 \

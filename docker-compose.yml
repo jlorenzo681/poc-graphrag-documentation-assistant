@@ -1,22 +1,23 @@
 version: '3.8'
 
 services:
-  poc-graphrag-documentation-assistant:
-    image: poc-graphrag-documentation-assistant:latest
+  webapp:
+    image: poc-graphrag-documentation-assistant-webapp:latest
     build:
       context: .
       dockerfile: Containerfile
-    container_name: poc-graphrag-documentation-assistant
+    container_name: webapp
     user: "${UID:-1000}:${GID:-1000}"
     ports:
       - "8501:8501"
     environment:
-
       - LLM_BASE_URL=${LLM_BASE_URL:-http://host.docker.internal:1234/v1}
       - REDIS_URL=redis://redis:6379/0
+      - BACKEND_URL=http://backend:8000
     volumes:
       # Persistent data volumes
       - .:/app:z
+      - /app/.venv
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
       - ./logs:/app/logs:z
@@ -33,21 +34,22 @@ services:
       - ALL
     cap_add:
       - NET_BIND_SERVICE
-    networks:
-      - rag-network
+
     depends_on:
       # Running locally now
       - redis
       - backend
 
   backend:
+    image: poc-graphrag-documentation-assistant-backend:latest
     build:
       context: .
       dockerfile: Containerfile
-    container_name: rag-backend
+    container_name: backend
     command: uvicorn src.backend.main:app --host 0.0.0.0 --port 8000 --reload --workers 1
     volumes:
       - .:/app:z
+      - /app/.venv
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
       - ${HOME}/.cache/huggingface:/app/.cache/huggingface:z
@@ -62,17 +64,16 @@ services:
     depends_on:
       - redis
 
-    networks:
-      - rag-network
-
-  celery_worker:
+  worker:
+    image: poc-graphrag-documentation-assistant-worker:latest
     build:
       context: .
       dockerfile: Containerfile
-    container_name: rag-worker
+    container_name: worker
     command: celery -A src.backend.celery_config worker --loglevel=info
     volumes:
       - .:/app:z
+      - /app/.venv
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
       - ./logs:/app/logs:z
@@ -85,8 +86,6 @@ services:
 
     depends_on:
       - redis
-    networks:
-      - rag-network
 
   redis:
     image: docker.io/library/redis:7-alpine
@@ -94,8 +93,7 @@ services:
     restart: unless-stopped
     ports:
       - "6379:6379"
-    networks:
-      - rag-network
+
     volumes:
       - redis-data:/data
 
@@ -112,11 +110,9 @@ services:
 
     volumes:
       - neo4j-data:/data
-    networks:
-      - rag-network
 
 networks:
-  rag-network:
+  default:
     driver: bridge
 
 volumes:

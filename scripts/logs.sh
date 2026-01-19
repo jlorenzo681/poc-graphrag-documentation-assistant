@@ -5,7 +5,7 @@ set -e
 
 # Parse arguments
 # Parse arguments
-CONTAINER="poc-graphrag-documentation-assistant"
+CONTAINER="assistant"
 
 
 echo "Viewing $CONTAINER logs (Ctrl+C to exit)..."
