@@ -1,6 +1,6 @@
-# Local RAG Chatbot with GraphRAG & Decoupled Architecture
+# Local documentation assistant with GraphRAG & Decoupled Architecture
 
-A production-ready, fully local Retrieval-Augmented Generation (RAG) system featuring a decoupled microservices architecture, visual knowledge graph, and event-driven communication.
+Local documentation assistant with GraphRAG, decoupled microservices (FastAPI, Celery, Streamlit), and privacy-focused local LLM support.
 
 ## 🚀 Features
 
