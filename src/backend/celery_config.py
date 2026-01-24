@@ -2,8 +2,12 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
-broker_url = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
-result_backend = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+# Celery Configuration - All values from environment variables
+broker_url = os.getenv("CELERY_BROKER_URL")
+result_backend = os.getenv("CELERY_RESULT_BACKEND")
+
+if not broker_url or not result_backend:
+    raise ValueError("CELERY_BROKER_URL and CELERY_RESULT_BACKEND must be set in environment variables")
 
 celery_app = Celery(
     "rag_backend",

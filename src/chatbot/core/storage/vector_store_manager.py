@@ -113,7 +113,7 @@ class VectorStoreManager:
              # Use LM Studio's embedding endpoint (OpenAI compatible)
              # MLX usually provides an OpenAI compatible endpoint as well
              from langchain_openai import OpenAIEmbeddings
-             base_url = getattr(settings, "LLM_BASE_URL", "http://host.docker.internal:1234/v1")
+             base_url = settings.LLM_BASE_URL
              if language_code == 'en':
                  model_name = settings.EMBEDDING_MODEL_EN
              else:
