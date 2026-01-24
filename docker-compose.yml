@@ -20,9 +20,7 @@ services:
       <<: *common-env
       BACKEND_URL: http://graphrag-backend:8000
     volumes:
-      # Persistent data volumes (development mounts)
-      - .:/app:z
-      - /app/.venv
+      # Persistent data volumes
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
       - ./logs:/app/logs:z
@@ -48,10 +46,9 @@ services:
       target: backend
     container_name: graphrag-backend
     volumes:
-      - .:/app:z
-      - /app/.venv
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
+      - ./logs:/app/logs:z
       - ${HOME}/.cache/huggingface:/app/.cache/huggingface:z
     environment:
       <<: *common-env
@@ -76,8 +73,6 @@ services:
       target: worker
     container_name: graphrag-worker
     volumes:
-      - .:/app:z
-      - /app/.venv
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
       - ./logs:/app/logs:z
@@ -103,8 +98,6 @@ services:
     container_name: graphrag-beat
     command: celery -A src.backend.celery_config beat --loglevel=info
     volumes:
-      - .:/app:z
-      - /app/.venv
       - ./logs:/app/logs:z
     environment:
       <<: *common-env
