@@ -34,9 +34,9 @@ FASTTEXT_MODEL_PATH: str = "data/models/lid.176.ftz"
 
 # GraphRAG Settings
 ENABLE_GRAPHRAG: bool = True
-NEO4J_URI: str = "bolt://neo4j:7687"
-NEO4J_USERNAME: str = "neo4j"
-NEO4J_PASSWORD: str = "password"
+NEO4J_URI: str = os.getenv("NEO4J_URI", "neo4j://localhost:7687")
+NEO4J_USERNAME: str = os.getenv("NEO4J_USERNAME", "neo4j")
+NEO4J_PASSWORD: str = os.getenv("NEO4J_PASSWORD", "password")
 
 # LLM Settings
 DEFAULT_LLM_PROVIDER: str = "lmstudio" # Options: "lmstudio"
