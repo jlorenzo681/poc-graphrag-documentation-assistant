@@ -2,7 +2,7 @@
 
 from .processing.document_processor import DocumentProcessor
 from .storage.vector_store_manager import VectorStoreManager
-from .rag_chain import RAGChain, RAGChatbot
+from src.chatbot.core.rag_chain import RAGChain, RAGChatbot
 
 __all__ = [
     "DocumentProcessor",

@@ -14,7 +14,7 @@ import os
 import hashlib
 import fasttext
 import sys
-from .event_bus import EventBus, VectorStoreUpdateEvent
+from src.chatbot.core.events.event_bus import EventBus, VectorStoreUpdateEvent
 import config.settings as settings
 
 

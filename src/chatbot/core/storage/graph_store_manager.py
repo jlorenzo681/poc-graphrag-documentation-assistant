@@ -2,7 +2,7 @@
 import os
 from typing import List, Optional, Dict, Any
 from langchain_community.graphs import Neo4jGraph
-from .simple_graph_transformer import SimpleGraphTransformer
+from src.chatbot.core.simple_graph_transformer import SimpleGraphTransformer
 
 from langchain_openai import ChatOpenAI
 from langchain_core.documents import Document

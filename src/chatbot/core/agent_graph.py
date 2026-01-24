@@ -9,7 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langgraph.graph import StateGraph, END
 from .storage.vector_store_manager import VectorStoreManager
-from .rag_chain import RAGChain
+from src.chatbot.core.rag_chain import RAGChain
 
 class GraphState(TypedDict):
     """
