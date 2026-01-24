@@ -18,36 +18,65 @@ ENV PYTHONUNBUFFERED=1 \
     TRANSFORMERS_CACHE=/app/.cache/huggingface \
     HF_HOME=/app/.cache/huggingface
 
-# Install system dependencies and uv in one layer
+# Install uv from official image (faster and more reliable)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+# ============================================
+# Builder stage - Compiles dependencies
+# ============================================
+FROM base AS builder
+
+# Install build dependencies (only in builder stage)
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y \
     build-essential \
     curl \
     git \
-    && rm -rf /var/lib/apt/lists/* \
-    && curl -LsSf https://astral.sh/uv/install.sh | sh \
-    && mv /root/.local/bin/uv /usr/local/bin/uv
-
-# Create non-root user for security
-RUN useradd -m -u 1000 appuser
-
-# ============================================
-# Dependencies stage - cached separately
-# ============================================
-FROM base AS dependencies
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency files for better caching
 COPY pyproject.toml uv.lock ./
 
-# Install Python dependencies with uv
+# Install Python dependencies with uv (compiles wheels here)
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+    uv sync --frozen --no-dev && \
+    # Aggressive cleanup to reduce image size
+    find /app/.venv -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true && \
+    find /app/.venv -type f -name "*.pyc" -delete && \
+    find /app/.venv -type f -name "*.pyo" -delete && \
+    find /app/.venv -name "*.dist-info" -type d -exec sh -c 'rm -rf "$1"/{RECORD,INSTALLER,WHEEL}' _ {} \; && \
+    # Remove tests and docs from packages
+    find /app/.venv -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true && \
+    find /app/.venv -type d -name "test" -exec rm -rf {} + 2>/dev/null || true && \
+    find /app/.venv -type d -name "doc" -exec rm -rf {} + 2>/dev/null || true && \
+    find /app/.venv -type d -name "docs" -exec rm -rf {} + 2>/dev/null || true && \
+    find /app/.venv -type d -name "examples" -exec rm -rf {} + 2>/dev/null || true
+
+# ============================================
+# Runtime stage - Minimal runtime environment  
+# ============================================
+FROM base AS runtime
+
+# Install only runtime dependencies (no build tools!)
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create non-root user for security
+RUN useradd -m -u 1000 appuser
+
+# Copy compiled virtual environment from builder
+COPY --from=builder /app/.venv /app/.venv
 
 # ============================================
 # Common stage - Application code
 # ============================================
-FROM dependencies AS common
+FROM runtime AS common
 
 # Create necessary directories
 RUN mkdir -p data/documents data/vector_stores logs /app/.cache/huggingface && \
