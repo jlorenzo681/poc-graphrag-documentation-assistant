@@ -1,14 +1,7 @@
 #!/bin/bash
-# View logs from RAG Chatbot container
+# View logs
 
-set -e
+SERVICE=${1:-graphrag-backend}
 
-# Parse arguments
-# Parse arguments
-CONTAINER="assistant"
-
-
-echo "Viewing $CONTAINER logs (Ctrl+C to exit)..."
-echo "=============================================="
-
-docker logs -f $CONTAINER
+echo "Viewing logs for $SERVICE..."
+docker compose logs -f $SERVICE

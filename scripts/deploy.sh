@@ -13,17 +13,6 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Parse flags
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        *)
-            echo -e "${YELLOW}Unknown option: $1${NC}"
-            echo "Usage: $0"
-            exit 1
-            ;;
-    esac
-done
-
 # Check if .env file exists
 if [ ! -f .env ]; then
     echo -e "${RED}Error: .env file not found!${NC}"
@@ -32,7 +21,6 @@ if [ ! -f .env ]; then
     exit 1
 fi
 
-# Source environment variables
 # Source environment variables
 export $(cat .env | grep -v '^#' | xargs)
 
@@ -69,45 +57,32 @@ mkdir -p data/documents data/vector_stores logs
 echo "Generating requirements.txt..."
 uv export --format requirements-txt > requirements.txt
 
-# Build the image only if it doesn't exist
-if ! docker image inspect poc-graphrag-documentation-assistant-webapp:latest >/dev/null 2>&1; then
-    echo -e "\n${YELLOW}Image not found. Building container image...${NC}"
-    docker build -t poc-graphrag-documentation-assistant-webapp:latest -f Containerfile .
-else
-    echo -e "\n${GREEN}✓ Image poc-graphrag-documentation-assistant-webapp:latest already exists${NC}"
-fi
-
 # Stop existing containers via compose
 echo -e "\n${YELLOW}Stopping existing containers...${NC}"
 $COMPOSE_CMD down 2>/dev/null || true
 
-# Cleanup buildx container which can block startup
-if docker ps -a --format "{{.Names}}" | grep -q "^buildx_buildkit_default$"; then
-    echo -e "${YELLOW}Stopping and removing buildx_buildkit_default container...${NC}"
-    docker stop buildx_buildkit_default >/dev/null 2>&1 || true
-    docker rm buildx_buildkit_default >/dev/null 2>&1 || true
-    echo -e "${GREEN}✓ buildx_buildkit_default removed${NC}"
-fi
-
 # Start all services using compose
-echo -e "\n${GREEN}Starting services...${NC}"
-$COMPOSE_CMD up -d
+echo -e "\n${GREEN}Building and starting services...${NC}"
+# --build ensures images are rebuilt if needed
+$COMPOSE_CMD up -d --build
 
 # Wait for application to start
 echo -e "\n${YELLOW}Waiting for application to start...${NC}"
-sleep 5
+sleep 10
 
 # Check if containers are running
-if docker ps | grep -q webapp; then
+if docker ps | grep -q graphrag-frontend; then
     echo -e "\n${GREEN}======================================"
     echo "✓ Deployment successful!"
     echo "======================================${NC}"
     echo ""
     echo "Services running:"
-    echo "  - RAG Chatbot: http://localhost:8501"
+    echo "  - Frontend: http://localhost:8501"
+    echo "  - Backend:  http://localhost:8000"
+    echo "  - Neo4j:    http://localhost:7474"
     echo ""
     echo "Useful commands:"
-    echo "  View logs:           docker logs -f webapp"
+    echo "  View logs:           docker logs -f graphrag-frontend"
     echo "  Stop all:            $COMPOSE_CMD down"
     echo "  Restart all:         $COMPOSE_CMD restart"
     echo "  Container status:    $COMPOSE_CMD ps"
@@ -118,6 +93,7 @@ else
     echo "✗ Deployment failed!"
     echo "======================================${NC}"
     echo "Check logs with:"
-    echo "  docker logs webapp"
+    echo "  docker logs graphrag-frontend"
+    echo "  docker logs graphrag-backend"
     exit 1
 fi

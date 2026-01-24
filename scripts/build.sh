@@ -9,7 +9,8 @@ echo "Building and starting RAG Chatbot services..."
 # Build and start services in detached mode
 # First, remove any existing containers to avoid name conflicts
 docker compose down --remove-orphans || true
-docker rm -f assistant backend worker redis neo4j 2>/dev/null || true
+# Manual cleanup just in case
+docker rm -f graphrag-frontend graphrag-backend graphrag-worker graphrag-beat graphrag-redis graphrag-neo4j 2>/dev/null || true
 
 # --build ensures images are rebuilt if needed (Docker acts smart about layer caching)
 # -d runs in background

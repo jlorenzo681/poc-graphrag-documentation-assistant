@@ -1,52 +1,52 @@
 version: '3.8'
 
+x-common-env: &common-env
+  REDIS_URL: redis://graphrag-redis:6379/0
+  LLM_BASE_URL: ${LLM_BASE_URL:-http://host.docker.internal:1234/v1}
+  # Add other common env vars here if needed
+
 services:
-  webapp:
-    image: poc-graphrag-documentation-assistant-webapp:latest
+  graphrag-frontend:
+    image: graphrag-frontend:latest
     build:
       context: .
       dockerfile: Containerfile
-    container_name: webapp
+      target: frontend
+    container_name: graphrag-frontend
     user: "${UID:-1000}:${GID:-1000}"
     ports:
       - "8501:8501"
     environment:
-      - LLM_BASE_URL=${LLM_BASE_URL:-http://host.docker.internal:1234/v1}
-      - REDIS_URL=redis://redis:6379/0
-      - BACKEND_URL=http://backend:8000
+      <<: *common-env
+      BACKEND_URL: http://graphrag-backend:8000
     volumes:
-      # Persistent data volumes
+      # Persistent data volumes (development mounts)
       - .:/app:z
       - /app/.venv
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
       - ./logs:/app/logs:z
     restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8501/_stcore/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    # Healthcheck defined in Dockerfile
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
     cap_add:
       - NET_BIND_SERVICE
-
+    networks:
+      - graphrag-network
     depends_on:
-      # Running locally now
-      - redis
-      - backend
+      - graphrag-redis
+      - graphrag-backend
 
-  backend:
-    image: poc-graphrag-documentation-assistant-backend:latest
+  graphrag-backend:
+    image: graphrag-backend:latest
     build:
       context: .
       dockerfile: Containerfile
-    container_name: backend
-    command: uvicorn src.backend.main:app --host 0.0.0.0 --port 8000 --reload --workers 1
+      target: backend
+    container_name: graphrag-backend
     volumes:
       - .:/app:z
       - /app/.venv
@@ -54,23 +54,27 @@ services:
       - ./data/vector_stores:/app/data/vector_stores:z
       - ${HOME}/.cache/huggingface:/app/.cache/huggingface:z
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - REDIS_URL=redis://redis:6379/0
-      - LLM_BASE_URL=${LLM_BASE_URL:-http://host.docker.internal:1234/v1}
-
+      <<: *common-env
+      CELERY_BROKER_URL: redis://graphrag-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://graphrag-redis:6379/0
+      NEO4J_URI: bolt://graphrag-neo4j:7687
+      NEO4J_AUTH: neo4j/password
     ports:
       - "8000:8000"
     depends_on:
-      - redis
+      - graphrag-redis
+      - graphrag-neo4j
+    networks:
+      - graphrag-network
+    # Healthcheck defined in Dockerfile
 
-  worker:
-    image: poc-graphrag-documentation-assistant-worker:latest
+  graphrag-worker:
+    image: graphrag-worker:latest
     build:
       context: .
       dockerfile: Containerfile
-    container_name: worker
-    command: celery -A src.backend.celery_config worker --loglevel=info
+      target: worker
+    container_name: graphrag-worker
     volumes:
       - .:/app:z
       - /app/.venv
@@ -79,27 +83,57 @@ services:
       - ./logs:/app/logs:z
       - ${HOME}/.cache/huggingface:/app/.cache/huggingface:z
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - REDIS_URL=redis://redis:6379/0
-      - LLM_BASE_URL=${LLM_BASE_URL:-http://host.docker.internal:1234/v1}
-
+      <<: *common-env
+      CELERY_BROKER_URL: redis://graphrag-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://graphrag-redis:6379/0
+      NEO4J_URI: bolt://graphrag-neo4j:7687
+      NEO4J_AUTH: neo4j/password
     depends_on:
-      - redis
+      - graphrag-redis
+      - graphrag-neo4j
+    networks:
+      - graphrag-network
 
-  redis:
+  graphrag-beat:
+    image: graphrag-worker:latest
+    build:
+      context: .
+      dockerfile: Containerfile
+      target: worker
+    container_name: graphrag-beat
+    command: celery -A src.backend.celery_config beat --loglevel=info
+    volumes:
+      - .:/app:z
+      - /app/.venv
+      - ./logs:/app/logs:z
+    environment:
+      <<: *common-env
+      CELERY_BROKER_URL: redis://graphrag-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://graphrag-redis:6379/0
+    depends_on:
+      - graphrag-redis
+    networks:
+      - graphrag-network
+
+  graphrag-redis:
     image: docker.io/library/redis:7-alpine
-    container_name: redis
+    container_name: graphrag-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
-
+    networks:
+      - graphrag-network
     volumes:
-      - redis-data:/data
+      - graphrag-redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  neo4j:
+  graphrag-neo4j:
     image: docker.io/library/neo4j:5.11
-    container_name: neo4j
+    container_name: graphrag-neo4j
     ports:
       - "7474:7474"
       - "7687:7687"
@@ -107,14 +141,20 @@ services:
       - NEO4J_AUTH=neo4j/password
       - NEO4J_PLUGINS=["apoc"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
-
     volumes:
-      - neo4j-data:/data
+      - graphrag-neo4j-data:/data
+    networks:
+      - graphrag-network
+    healthcheck:
+      test: [ "CMD-SHELL", "cypher-shell -u neo4j -p password 'RETURN 1'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
-  default:
+  graphrag-network:
     driver: bridge
 
 volumes:
-  redis-data:
-  neo4j-data:
+  graphrag-redis-data:
+  graphrag-neo4j-data:

@@ -1,25 +1,6 @@
 #!/bin/bash
-# Stop RAG Chatbot containers
-
-set -e
+# Stop RAG Chatbot services
 
 echo "Stopping RAG Chatbot services..."
-
-# Compose file
-COMPOSE_FILE="docker-compose.yml"
-
-# Check if docker-compose is available and use correct command
-if command -v docker-compose &> /dev/null; then
-    echo "Using docker-compose..."
-    docker-compose -f $COMPOSE_FILE down
-elif docker compose version &> /dev/null; then
-    echo "Using docker compose plugin..."
-    docker compose -f $COMPOSE_FILE down
-else
-    # Manual stop - stop both containers
-    echo "Stopping containers manually..."
-    docker stop assistant 2>/dev/null || true
-    docker rm assistant 2>/dev/null || true
-fi
-
-echo "✓ All services stopped"
+docker compose down
+echo "✓ Services stopped"
