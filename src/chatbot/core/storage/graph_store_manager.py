@@ -24,18 +24,31 @@ class GraphStoreManager:
             print("ℹ️ GraphRAG is disabled in settings.")
 
     def _initialize_graph(self):
-        """Initialize connection to Neo4j."""
-        try:
-            self.graph = Neo4jGraph(
-                url=settings.NEO4J_URI,
-                username=settings.NEO4J_USERNAME,
-                password=settings.NEO4J_PASSWORD
-            )
-            # Create fulltext index for hybrid search if needed, but langchain might handle it
-            print("✓ Connected to Neo4j graph database")
-        except Exception as e:
-            print(f"❌ Failed to connect to Neo4j: {e}")
-            self.graph = None
+        """Initialize connection to Neo4j with retry logic."""
+        import time
+        max_retries = 3
+        retry_delay = 2  # seconds
+        
+        for attempt in range(max_retries):
+            try:
+                self.graph = Neo4jGraph(
+                    url=settings.NEO4J_URI,
+                    username=settings.NEO4J_USERNAME,
+                    password=settings.NEO4J_PASSWORD
+                )
+                # Test the connection
+                self.graph.query("RETURN 1")
+                print("✓ Connected to Neo4j graph database")
+                return
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    print(f"⚠️ Neo4j connection attempt {attempt + 1}/{max_retries} failed: {e}")
+                    print(f"   Retrying in {retry_delay} seconds...")
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
+                else:
+                    print(f"❌ Failed to connect to Neo4j after {max_retries} attempts: {e}")
+                    self.graph = None
 
     def _initialize_transformer(self):
         """Initialize LLM graph transformer."""
