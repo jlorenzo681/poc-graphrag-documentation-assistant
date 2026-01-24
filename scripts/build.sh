@@ -1,22 +1,20 @@
 #!/bin/bash
-# Build and Start RAG Chatbot services
-# Optimized for speed and completeness
+# Build RAG Chatbot images
+# Does NOT start containers
 
 set -e
 
-echo "Building and starting RAG Chatbot services..."
+echo "Building RAG Chatbot images..."
 
-# Build and start services in detached mode
-# First, remove any existing containers to avoid name conflicts
-docker compose down --remove-orphans || true
-# Manual cleanup just in case
-docker rm -f graphrag-frontend graphrag-backend graphrag-worker graphrag-beat graphrag-redis graphrag-neo4j 2>/dev/null || true
+# Build images only
+# --parallel might be useful but defaults are usually fine
+if command -v docker-compose &> /dev/null; then
+    docker-compose build
+elif docker compose version &> /dev/null; then
+    docker compose build
+else
+    echo "Error: Docker Compose not found"
+    exit 1
+fi
 
-# --build ensures images are rebuilt if needed (Docker acts smart about layer caching)
-# -d runs in background
-docker compose up --build -d
-
-echo "✓ Services built and started!"
-echo ""
-echo "Service status:"
-docker compose ps
+echo "✓ Images built successfully!"

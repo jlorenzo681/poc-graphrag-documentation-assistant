@@ -53,18 +53,16 @@ fi
 echo "Creating necessary directories..."
 mkdir -p data/documents data/vector_stores logs
 
-# Generate requirements.txt
-echo "Generating requirements.txt..."
-uv export --format requirements-txt > requirements.txt
+
 
 # Stop existing containers via compose
 echo -e "\n${YELLOW}Stopping existing containers...${NC}"
 $COMPOSE_CMD down 2>/dev/null || true
 
 # Start all services using compose
-echo -e "\n${GREEN}Building and starting services...${NC}"
-# --build ensures images are rebuilt if needed
-$COMPOSE_CMD up -d --build
+echo -e "\n${GREEN}Starting services (no build)...${NC}"
+# --no-build ensures we use existing images
+$COMPOSE_CMD up -d --no-build
 
 # Wait for application to start
 echo -e "\n${YELLOW}Waiting for application to start...${NC}"
