@@ -1,7 +1,7 @@
 """Core chatbot modules."""
 
-from .document_processor import DocumentProcessor
-from .vector_store_manager import VectorStoreManager
+from .processing.document_processor import DocumentProcessor
+from .storage.vector_store_manager import VectorStoreManager
 from .rag_chain import RAGChain, RAGChatbot
 
 __all__ = [

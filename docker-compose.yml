@@ -95,7 +95,7 @@ services:
       - graphrag-network
 
   graphrag-beat:
-    image: graphrag-worker:latest
+    image: graphrag-beat:latest
     build:
       context: .
       dockerfile: Containerfile

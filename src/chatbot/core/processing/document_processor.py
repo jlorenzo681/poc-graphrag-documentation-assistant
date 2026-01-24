@@ -9,7 +9,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 import os
 import time
-from .event_bus import EventBus, ProcessingStartEvent, ProcessingCompleteEvent
+from src.chatbot.core.events.event_bus import EventBus, ProcessingStartEvent, ProcessingCompleteEvent
 
 
 class DocumentProcessor:

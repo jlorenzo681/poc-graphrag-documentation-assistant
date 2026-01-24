@@ -74,7 +74,7 @@ fi
 if [ "$REMOVE_IMAGES" = true ]; then
     echo -e "\n${YELLOW}Removing images...${NC}"
 
-    for image in graphrag-frontend graphrag-backend graphrag-worker; do
+    for image in graphrag-frontend graphrag-backend graphrag-worker graphrag-beat; do
         if docker image inspect $image:latest >/dev/null 2>&1; then
             docker rmi $image:latest 2>/dev/null || true
             echo -e "${GREEN}✓ $image image removed${NC}"

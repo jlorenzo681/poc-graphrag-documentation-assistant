@@ -14,8 +14,8 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 import time
 import time
-from .event_bus import EventBus, ChatQueryEvent, ChatResponseEvent, ErrorEvent
-from .graph_store_manager import GraphStoreManager
+from .events.event_bus import EventBus, ChatQueryEvent, ChatResponseEvent, ErrorEvent
+from .storage.graph_store_manager import GraphStoreManager
 import config.settings as settings
 from langchain_core.retrievers import BaseRetriever
 
