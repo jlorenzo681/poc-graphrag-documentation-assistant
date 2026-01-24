@@ -17,8 +17,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from config.settings import DOCUMENTS_DIR, LLM_BASE_URL, DEFAULT_EMBEDDING_TYPE
 # DocumentProcessor is now used by backend only
 from src.chatbot.core.rag_chain import RAGChain, RAGChatbot
-from src.chatbot.core.vector_store_manager import VectorStoreManager
-from src.chatbot.core.event_bus import EventBus, Event, DocumentUploadEvent, ProcessingCompleteEvent, ChatResponseEvent, ErrorEvent
+from src.chatbot.core.storage.vector_store_manager import VectorStoreManager
+from src.chatbot.core.events.event_bus import EventBus, Event, DocumentUploadEvent, ProcessingCompleteEvent, ChatResponseEvent, ErrorEvent
 from streamlit_agraph import agraph, Node, Edge, Config
 
 import requests

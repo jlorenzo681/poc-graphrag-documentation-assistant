@@ -9,7 +9,7 @@ import config.settings as settings
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from src.chatbot.core.graph_store_manager import GraphStoreManager
+from src.chatbot.core.storage.graph_store_manager import GraphStoreManager
 
 def test_graph_rag():
     print("🕸️ Testing GraphRAG Integration...")

@@ -62,6 +62,20 @@ class ChatResponseEvent(Event):
 
 
 @dataclass
+class GraphExtractionStartEvent(Event):
+    """Event triggered when graph extraction starts."""
+    file_path: str
+    chunk_count: int
+
+@dataclass
+class GraphExtractionCompleteEvent(Event):
+    """Event triggered when graph extraction is complete."""
+    file_path: str
+    node_count: int
+    relationship_count: int
+    duration_seconds: float
+
+@dataclass
 class ErrorEvent(Event):
     """Event triggered when an error occurs."""
     error_type: str
@@ -108,6 +122,10 @@ class EventBus:
             except Exception as e:
                 print(f"⚠️ Redis connection failed: {e}")
                 self._redis_enabled = False
+        else:
+             if redis_url and not redis:
+                 print("⚠️ REDIS_URL set but 'redis' package not installed. Redis disabled.")
+             self._redis_enabled = False
 
     def _redis_listener(self):
         """Listen for messages from Redis and publish them locally."""
