@@ -13,7 +13,7 @@ services:
       dockerfile: Containerfile
       target: frontend
     container_name: graphrag-frontend
-    user: "${UID:-1000}:${GID:-1000}"
+    user: "${UID:-0}:${GID:-0}"
     ports:
       - "8501:8501"
     environment:
@@ -48,6 +48,7 @@ services:
       dockerfile: Containerfile
       target: backend
     container_name: graphrag-backend
+    user: "${UID:-0}:${GID:-0}"
     volumes:
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
@@ -75,6 +76,7 @@ services:
       dockerfile: Containerfile
       target: worker
     container_name: graphrag-worker
+    user: "${UID:-0}:${GID:-0}"
     volumes:
       - ./data/documents:/app/data/documents:z
       - ./data/vector_stores:/app/data/vector_stores:z
@@ -99,6 +101,7 @@ services:
       dockerfile: Containerfile
       target: worker
     container_name: graphrag-beat
+    user: "${UID:-0}:${GID:-0}"
     command: celery -A src.backend.celery_config beat --loglevel=info
     volumes:
       - ./logs:/app/logs:z
