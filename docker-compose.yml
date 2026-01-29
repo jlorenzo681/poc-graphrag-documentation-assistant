@@ -2,7 +2,7 @@ version: '3.8'
 
 x-common-env: &common-env
   REDIS_URL: redis://graphrag-redis:6379/0
-  LLM_BASE_URL: ${LLM_BASE_URL:-http://host.docker.internal:1234/v1}
+  LLM_BASE_URL: ${LLM_BASE_URL:-http://host.containers.internal:1234/v1}
   # Add other common env vars here if needed
 
 services:

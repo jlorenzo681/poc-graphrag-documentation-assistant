@@ -65,8 +65,7 @@ For developing individual components without Docker containers:
 1.  **Install Dependencies**
     ```bash
     make install
-    # or
-    pip install -r requirements.txt
+    make install
     ```
 
 2.  **Start Infrastructure (Redis & Neo4j)**
@@ -117,7 +116,7 @@ poc-poc-graphrag-documentation-assistant-wiki/
 ├── app.py                    # Streamlit Frontend
 ├── docker-compose.yml        # Docker Services Definition
 ├── Makefile                  # Setup & Run Commands
-└── requirements.txt          # Python Dependencies
+
 ```
 
 ## 🔧 Troubleshooting

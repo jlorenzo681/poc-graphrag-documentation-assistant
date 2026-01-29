@@ -29,7 +29,7 @@ make deploy
 
 ```bash
 # 1. Install dependencies
-pip install -r requirements.txt
+make install
 
 # 2. Run!
 streamlit run app.py
